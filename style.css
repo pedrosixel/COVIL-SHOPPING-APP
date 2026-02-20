@@ -1,5 +1,12 @@
 /* ==============================
    Clinical Luxury Design System
+   Responsive Checklist:
+   - Added fluid tokens with clamp() for spacing/size stability
+   - Added overflow-x guards to prevent horizontal scrolling
+   - Kept iPhone frame-first composition with safe-area padding
+   - Made menu overlay scroll internally on short viewports
+   - Added small-screen product-grid fallback (2 -> 1 column)
+   - Preserved reduced-motion behavior and transition timing
    ============================== */
 
 * , *::before, *::after {
@@ -9,6 +16,7 @@
 html,
 body {
   height: 100%;
+  overflow-x: hidden;
 }
 
 body,
@@ -37,6 +45,7 @@ textarea {
   --device-w: 393px;
   --device-h: 852px;
   --phone-scale: 1;
+  --frame-gutter: 24px;
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -49,16 +58,23 @@ textarea {
   --sale: #cc1d1d;
   --ok: #168346;
 
-  --space-1: 8px;
-  --space-2: 12px;
-  --space-3: 16px;
-  --space-4: 24px;
-  --space-5: 32px;
+  --space-1: clamp(6px, 1.8vw, 8px);
+  --space-2: clamp(10px, 2.6vw, 12px);
+  --space-3: clamp(14px, 3.5vw, 16px);
+  --space-4: clamp(18px, 5.2vw, 24px);
+  --space-5: clamp(24px, 7.2vw, 32px);
 
-  --page-pad: 28px;
+  --page-pad: clamp(18px, 6vw, 28px);
   --notch-h: calc(10px + var(--safe-top));
-  --topbar-h: 82px;
-  --sticky-h: calc(62px + var(--safe-bottom));
+  --topbar-h: clamp(76px, 12vw, 82px);
+  --sticky-h: calc(clamp(58px, 10vw, 62px) + var(--safe-bottom));
+  --divider-w: max(1px, 0.08rem);
+
+  --label-size: clamp(10px, 2.5vw, 11px);
+  --meta-size: clamp(9px, 2.2vw, 10px);
+  --title-size: clamp(22px, 6.5vw, 28px);
+  --title-size-sm: clamp(20px, 5.6vw, 24px);
+  --menu-item-size: clamp(34px, 10vw, 42px);
 
   --duration-fast: 160ms;
   --duration-base: 260ms;
@@ -93,6 +109,25 @@ body {
   transform: scale(var(--phone-scale));
   transform-origin: center;
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.08);
+  max-width: calc(100vw - var(--frame-gutter));
+  max-height: calc(100dvh - var(--frame-gutter));
+}
+
+@media (max-width: 768px) and (pointer: coarse) {
+  body {
+    background: var(--bg);
+    display: block;
+    overflow: hidden;
+  }
+
+  .phone {
+    width: 100vw;
+    height: 100dvh;
+    max-width: 100vw;
+    max-height: 100dvh;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 body.page-enter .phone {
@@ -134,18 +169,20 @@ body.page-leave .phone {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .scrollY {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
 .brandScript {
   font-family: "Brush Script MT", "Segoe Script", "Snell Roundhand", cursive;
-  font-size: 38px;
+  font-size: clamp(30px, 8vw, 38px);
   line-height: 1;
   text-align: center;
   font-weight: 400;
@@ -158,7 +195,7 @@ body.page-leave .phone {
 
 .centerTitle {
   text-align: center;
-  font-size: 28px;
+  font-size: var(--title-size);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -168,19 +205,19 @@ body.page-leave .phone {
 }
 
 .centerTitle.small {
-  font-size: 24px;
+  font-size: var(--title-size-sm);
 }
 
 .miniLabel {
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .icon {
-  width: 54px;
-  height: 32px;
+  width: clamp(44px, 12vw, 54px);
+  min-height: 44px;
   border: 0;
   background: transparent;
   display: inline-flex;
@@ -225,7 +262,7 @@ body.page-leave .phone {
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 10px;
+  font-size: var(--meta-size);
   justify-self: start;
 }
 
@@ -233,7 +270,7 @@ body.page-leave .phone {
   justify-self: end;
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
   color: var(--text);
   opacity: 0.85;
@@ -245,7 +282,7 @@ body.page-leave .phone {
 }
 
 .btnPrimary {
-  min-height: 52px;
+  min-height: clamp(48px, 12vw, 52px);
   border: 0;
   background: #000;
   color: #fff;
@@ -253,10 +290,10 @@ body.page-leave .phone {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
+  padding: 0 clamp(16px, 5vw, 20px);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 11px;
+  font-size: var(--label-size);
   transition: opacity var(--duration-base) var(--ease);
 }
 
@@ -266,8 +303,8 @@ body.page-leave .phone {
 }
 
 .btnSecondary {
-  min-height: 40px;
-  border: 1px solid var(--line);
+  min-height: 44px;
+  border: var(--divider-w) solid var(--line);
   background: #fff;
   color: #000;
   text-decoration: none;
@@ -277,7 +314,7 @@ body.page-leave .phone {
   padding: 0 14px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 10px;
+  font-size: var(--meta-size);
   transition: background var(--duration-base) var(--ease), color var(--duration-base) var(--ease);
 }
 
@@ -366,6 +403,8 @@ body.menu-open .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .menuShell.is-open .menuPanel {
@@ -379,10 +418,11 @@ body.menu-open .form {
   background: transparent;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: 10px;
+  font-size: var(--meta-size);
   color: var(--muted);
   cursor: pointer;
   margin-bottom: 22px;
+  min-height: 44px;
 }
 
 .menuItem {
@@ -390,7 +430,7 @@ body.menu-open .form {
   background: transparent;
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 42px;
+  font-size: var(--menu-item-size);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -423,7 +463,7 @@ body.menu-open .form {
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.13em;
-  font-size: 10px;
+  font-size: var(--meta-size);
   color: var(--muted);
 }
 
@@ -439,10 +479,11 @@ body.menu-open .form {
   background: transparent;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: 10px;
+  font-size: var(--meta-size);
   color: var(--muted);
   cursor: pointer;
   padding: 0;
+  min-height: 44px;
 }
 
 .filterDrawer,
@@ -467,7 +508,7 @@ body.menu-open .form {
   text-align: left;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 10px;
+  font-size: var(--meta-size);
   color: #000;
   padding: 0;
 }
@@ -476,7 +517,7 @@ body.menu-open .form {
   padding: 0 var(--page-pad) calc(30px + var(--safe-bottom));
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px 18px;
+  gap: clamp(16px, 5vw, 24px) clamp(12px, 4vw, 18px);
   align-items: start;
 }
 
@@ -502,7 +543,7 @@ body.menu-open .form {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 10px;
+  font-size: var(--meta-size);
   text-transform: uppercase;
   letter-spacing: 0.13em;
   color: var(--muted);
@@ -523,7 +564,7 @@ body.menu-open .form {
 .backRow a {
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
   color: var(--muted);
 }
@@ -558,7 +599,7 @@ body.menu-open .form {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -566,12 +607,12 @@ body.menu-open .form {
 
 .pdpMetaBlock .name {
   color: #000;
-  font-size: 13px;
+  font-size: clamp(12px, 3.4vw, 13px);
   letter-spacing: 0.06em;
 }
 
 .pdpLabel {
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
   color: var(--muted);
   text-transform: uppercase;
@@ -585,11 +626,11 @@ body.menu-open .form {
 
 .sizeRow button {
   min-width: 46px;
-  min-height: 36px;
-  border: 1px solid var(--line);
+  min-height: 44px;
+  border: var(--divider-w) solid var(--line);
   background: #fff;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.12em;
   cursor: pointer;
   transition: background var(--duration-base) var(--ease), color var(--duration-base) var(--ease), border-color var(--duration-base) var(--ease);
@@ -608,7 +649,7 @@ body.menu-open .form {
 }
 
 .pdpDetails p {
-  font-size: 11px;
+  font-size: clamp(10px, 2.8vw, 11px);
   letter-spacing: 0.05em;
   text-transform: none;
   color: #111;
@@ -639,7 +680,7 @@ body.menu-open .form {
   right: var(--page-pad);
   top: 220px;
   background: #fff;
-  border: 1px solid var(--line);
+  border: var(--divider-w) solid var(--line);
   padding: 28px 22px;
   display: flex;
   flex-direction: column;
@@ -677,14 +718,14 @@ body.has-modal .modalCard {
 
 .modalTitle {
   text-align: center;
-  font-size: 34px;
+  font-size: clamp(28px, 8.6vw, 34px);
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .modalText {
   text-align: center;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
   color: var(--muted);
   line-height: 1.8;
@@ -758,14 +799,14 @@ body.has-modal [data-runtime-overlay] .modalCard {
 }
 
 .cartInfo h3 {
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.13em;
   line-height: 1.55;
 }
 
 .cartInfo .meta {
   margin-top: 4px;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.12em;
   color: var(--muted);
 }
@@ -779,9 +820,9 @@ body.has-modal [data-runtime-overlay] .modalCard {
 
 .qtyRow button,
 .trashBtn {
-  min-width: 32px;
-  min-height: 32px;
-  border: 1px solid var(--line);
+  min-width: 36px;
+  min-height: 44px;
+  border: var(--divider-w) solid var(--line);
   background: #fff;
   font-size: 11px;
   text-transform: uppercase;
@@ -800,7 +841,7 @@ body.has-modal [data-runtime-overlay] .modalCard {
 
 .cartNote {
   padding: 2px 4px 0;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.12em;
   color: var(--muted);
   line-height: 1.7;
@@ -814,7 +855,7 @@ body.has-modal [data-runtime-overlay] .modalCard {
   align-items: center;
   justify-content: space-between;
   padding: 0 14px;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
 }
 
@@ -831,7 +872,7 @@ body.has-modal [data-runtime-overlay] .modalCard {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
   color: var(--muted);
 }
@@ -841,12 +882,12 @@ body.has-modal [data-runtime-overlay] .modalCard {
 }
 
 .brandBox {
-  border: 1px solid var(--line);
+  border: var(--divider-w) solid var(--line);
   min-height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
 }
 
@@ -862,19 +903,19 @@ body.has-modal [data-runtime-overlay] .modalCard {
 }
 
 .form h3 {
-  font-size: 28px;
+  font-size: var(--title-size);
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .field {
   min-height: 44px;
-  border: 1px solid var(--line);
+  border: var(--divider-w) solid var(--line);
   background: #fff;
   display: flex;
   align-items: center;
   padding: 0 12px;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
   color: var(--muted);
   outline: none;
@@ -890,7 +931,7 @@ body.has-modal [data-runtime-overlay] .modalCard {
   grid-template-columns: 20px 1fr;
   gap: 10px;
   align-items: center;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.12em;
   color: var(--muted);
 }
@@ -898,7 +939,7 @@ body.has-modal [data-runtime-overlay] .modalCard {
 .checkbox {
   width: 18px;
   height: 18px;
-  border: 1px solid var(--line);
+  border: var(--divider-w) solid var(--line);
 }
 
 .checkbox.checked {
@@ -913,11 +954,11 @@ body.has-modal [data-runtime-overlay] .modalCard {
 
 .payIcon {
   min-height: 52px;
-  border: 1px solid var(--line);
+  border: var(--divider-w) solid var(--line);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.1em;
 }
 
@@ -925,7 +966,7 @@ body.has-modal [data-runtime-overlay] .modalCard {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10px;
+  font-size: var(--meta-size);
   color: var(--muted);
   letter-spacing: 0.12em;
 }
@@ -962,7 +1003,7 @@ body.has-modal [data-runtime-overlay] .modalCard {
 .totalMain,
 .totalSub,
 .totalRow .big {
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.14em;
 }
 
@@ -986,9 +1027,31 @@ body.has-modal [data-runtime-overlay] .modalCard {
 
 .footerLinks a {
   text-decoration: none;
-  font-size: 10px;
+  font-size: var(--meta-size);
   letter-spacing: 0.12em;
   color: var(--muted);
+}
+
+@media (max-width: 360px) {
+  .lookbookGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .modalCard {
+    left: calc(var(--page-pad) - 4px);
+    right: calc(var(--page-pad) - 4px);
+  }
+}
+
+@media (max-height: 700px) {
+  .modalCard {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  body.has-modal .modalCard {
+    transform: translateY(-50%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
