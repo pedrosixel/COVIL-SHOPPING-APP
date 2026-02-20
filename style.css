@@ -209,6 +209,16 @@ body.page-leave .phone {
   height: clamp(18px, 5vw, 24px);
 }
 
+@media (min-width: 769px) {
+  .brandScript img {
+    height: 30px;
+  }
+
+  .centerTitle img {
+    height: 24px;
+  }
+}
+
 .centerTitle {
   text-align: center;
   font-size: var(--title-size);
