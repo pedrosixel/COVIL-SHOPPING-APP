@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/png" href="assets/CovilLogo.png">
+  <title>Checkout Summary</title>
+</head>
+<body>
+  <div class="phone">
+    <div class="notch"></div>
+
+    <header class="checkoutHeader">
+      <a class="icon" href="checkout.html" aria-label="Back">
+        <img class="backArrowIcon" src="assets/BackArrow.png" alt="" aria-hidden="true">
+      </a>
+      <a class="brandBox" href="index.html"><img src="assets/CovilLogo.png" alt="Covil" height="24"></a>
+      <a class="cartLink" href="cart.html" aria-label="Cart"><img class="cartLinkIcon" src="assets/CartIcon.png" alt="" aria-hidden="true"><b data-cart-count></b></a>
+    </header>
+
+    <div class="orderSummaryBar">
+      <span>SHOPPING SUMMARY</span>
+      <span class="amt">CA$0</span>
+    </div>
+
+    <main class="content">
+      <section class="summaryWrap">
+        <h3>Shopping Summary</h3>
+        <div class="summaryList" data-summary-items></div>
+
+        <div class="summaryTotals">
+          <div class="row"><span>Subtotal</span><span data-summary-subtotal>CA$0</span></div>
+          <div class="row"><span>Taxes</span><span data-summary-tax>CA$0</span></div>
+          <div class="row"><span>Shipping</span><span data-summary-shipping>CA$0</span></div>
+          <div class="row"><span>Total</span><span data-summary-total>CA$0</span></div>
+        </div>
+
+        <button class="btnPrimary" type="button" data-finalize-purchase style="width:100%;">Finalize Purchase</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

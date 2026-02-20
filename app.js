@@ -5,6 +5,8 @@
     cartKey: "proto_cart_v1",
     lastCategoryKey: "proto_last_category",
     filtersKey: "proto_filters",
+    shippingFee: 12,
+    taxRate: 0.12,
     phoneWidth: 393,
     phoneHeight: 852,
     stageGutter: 24,
@@ -280,6 +282,17 @@
     qsa("[data-cart-count]").forEach((node) => {
       node.textContent = count > 0 ? String(count) : "";
     });
+    qsa(".cartLink[aria-label]").forEach((link) => {
+      link.setAttribute("aria-label", count > 0 ? `Cart, ${count} item${count > 1 ? "s" : ""}` : "Cart");
+    });
+  }
+
+  function computeCartTotals(items = Cart.read()) {
+    const subtotal = Cart.subtotal(items);
+    const taxes = subtotal * CONFIG.taxRate;
+    const shipping = subtotal > 0 ? CONFIG.shippingFee : 0;
+    const total = subtotal + taxes + shipping;
+    return { subtotal, taxes, shipping, total };
   }
 
   function setContinueShoppingLinks() {
@@ -488,18 +501,59 @@
 
     const allFilters = getFilters();
     const state = allFilters[category] || { color: "all", sort: "featured" };
+    const filterToggle = qs("[data-filter-toggle]");
+    const sortToggle = qs("[data-sort-toggle]");
+    const filterDrawer = qs("[data-filter-drawer]");
+    const sortDrawer = qs("[data-sort-drawer]");
+
+    const controls = qs(".listControls");
+    let activeRow = qs("[data-list-states]");
+    if (!activeRow && controls) {
+      activeRow = document.createElement("div");
+      activeRow.className = "listStates";
+      activeRow.setAttribute("data-list-states", "");
+      controls.after(activeRow);
+    }
+
+    const labelForSort = (sortValue) => {
+      if (sortValue === "price_asc") return "PRICE (LOW-HIGH)";
+      if (sortValue === "price_desc") return "PRICE (HIGH-LOW)";
+      return "";
+    };
+
+    const renderActiveStates = () => {
+      if (!activeRow) return;
+      const chips = [];
+      if (state.color && state.color !== "all") {
+        chips.push(
+          `<button type="button" class="listStateChip" data-clear-state="color" aria-label="Clear color filter">FILTER: ${state.color.toUpperCase()} <span aria-hidden="true">x</span></button>`
+        );
+      }
+      if (state.sort && state.sort !== "featured") {
+        chips.push(
+          `<button type="button" class="listStateChip" data-clear-state="sort" aria-label="Clear sort">SORT: ${labelForSort(state.sort)} <span aria-hidden="true">x</span></button>`
+        );
+      }
+      activeRow.innerHTML = chips.join("");
+      qsa("[data-clear-state]", activeRow).forEach((button) => {
+        button.addEventListener("click", () => {
+          const mode = button.getAttribute("data-clear-state");
+          if (mode === "color") state.color = "all";
+          if (mode === "sort") state.sort = "featured";
+          allFilters[category] = state;
+          setFilters(allFilters);
+          render();
+        });
+      });
+    };
 
     const render = () => {
       const products = getProductsByCategory(category);
       const result = applyFilterSort(products, state);
       renderCategoryCards(grid, result, category);
+      renderActiveStates();
       wireAnchors();
     };
-
-    const filterToggle = qs("[data-filter-toggle]");
-    const sortToggle = qs("[data-sort-toggle]");
-    const filterDrawer = qs("[data-filter-drawer]");
-    const sortDrawer = qs("[data-sort-drawer]");
 
     if (filterToggle && filterDrawer) {
       filterToggle.addEventListener("click", () => {
@@ -661,19 +715,41 @@
 
     const list = qs("[data-cart-list]");
     const subtotalNode = qs("[data-subtotal]");
+    const checkoutButton = qs("[data-cart-checkout]");
     if (!list || !subtotalNode) return;
+
+    const setCheckoutDisabled = (disabled) => {
+      if (!checkoutButton) return;
+      checkoutButton.classList.toggle("is-disabled", disabled);
+      checkoutButton.setAttribute("aria-disabled", disabled ? "true" : "false");
+      if (disabled) {
+        checkoutButton.setAttribute("tabindex", "-1");
+      } else {
+        checkoutButton.removeAttribute("tabindex");
+      }
+    };
+
+    if (checkoutButton) {
+      checkoutButton.addEventListener("click", (event) => {
+        if (checkoutButton.classList.contains("is-disabled")) {
+          event.preventDefault();
+        }
+      });
+    }
 
     const render = () => {
       const items = Cart.read();
       if (items.length === 0) {
         list.innerHTML = `<div class="miniLabel" style="padding:6px 0 2px;">you have not selected any items yet</div>`;
         subtotalNode.textContent = "CA$0";
+        setCheckoutDisabled(true);
         renderCartCount();
         return;
       }
 
       list.innerHTML = items.map(cartRowMarkup).join("");
       subtotalNode.textContent = `CA${formatMoney(Cart.subtotal(items))}`;
+      setCheckoutDisabled(false);
       renderCartCount();
 
       qsa("[data-inc]", list).forEach((btn) => {
@@ -714,26 +790,77 @@
   }
 
   function initCheckout() {
-    const payBtn = qs("[data-pay-now]");
-    if (!payBtn) return;
+    const continueBtn = qs("[data-checkout-continue]");
+    if (!continueBtn) return;
 
-    const subtotal = Cart.subtotal();
+    const cartItems = Cart.read();
+    if (!cartItems.length) {
+      navigate("cart.html");
+      return;
+    }
+
+    const totals = computeCartTotals(cartItems);
     const count = Cart.count();
 
     const summary = qs(".orderSummaryBar .amt");
-    const total = qs(".totalRow .big");
+    const totalNode = qs(".totalRow .big");
     const itemText = qs(".totalSub");
+    const checkoutTitle = qs("[data-checkout-step-title]");
 
-    if (subtotal > 0) {
-      if (summary) summary.textContent = `CA${formatMoney(subtotal)}`;
-      if (total) total.textContent = `CA${formatMoney(subtotal)}`;
-    }
+    if (checkoutTitle) checkoutTitle.textContent = "Shipping and payment Info";
+    if (summary) summary.textContent = `CA${formatMoney(totals.total)}`;
+    if (totalNode) totalNode.textContent = `CA${formatMoney(totals.total)}`;
 
     if (itemText && count > 0) {
       itemText.textContent = `${count} ITEMS`;
     }
 
-    payBtn.addEventListener("click", () => {
+    continueBtn.addEventListener("click", () => {
+      navigate("checkout-summary.html");
+    });
+  }
+
+  function checkoutSummaryRow(item) {
+    return `
+      <article class="summaryItem">
+        <div class="summaryThumb"><img src="${item.image}" alt="${item.name}"></div>
+        <div class="summaryInfo">
+          <h3>${item.name.toUpperCase()} - ${item.color.toUpperCase()}</h3>
+          <div class="meta">${item.color.toUpperCase()} / ${item.size}</div>
+          <div class="meta">QTY ${item.qty}</div>
+        </div>
+        <div class="summaryPrice">CA${formatMoney(item.qty * item.price)}</div>
+      </article>
+    `;
+  }
+
+  function initCheckoutSummary() {
+    const finalizeBtn = qs("[data-finalize-purchase]");
+    if (!finalizeBtn) return;
+
+    const items = Cart.read();
+    if (!items.length) {
+      navigate("cart.html");
+      return;
+    }
+
+    const list = qs("[data-summary-items]");
+    const subtotalNode = qs("[data-summary-subtotal]");
+    const taxNode = qs("[data-summary-tax]");
+    const shippingNode = qs("[data-summary-shipping]");
+    const totalNode = qs("[data-summary-total]");
+    const summaryAmt = qs(".orderSummaryBar .amt");
+
+    if (list) list.innerHTML = items.map(checkoutSummaryRow).join("");
+
+    const totals = computeCartTotals(items);
+    if (subtotalNode) subtotalNode.textContent = `CA${formatMoney(totals.subtotal)}`;
+    if (taxNode) taxNode.textContent = `CA${formatMoney(totals.taxes)}`;
+    if (shippingNode) shippingNode.textContent = `CA${formatMoney(totals.shipping)}`;
+    if (totalNode) totalNode.textContent = `CA${formatMoney(totals.total)}`;
+    if (summaryAmt) summaryAmt.textContent = `CA${formatMoney(totals.total)}`;
+
+    finalizeBtn.addEventListener("click", () => {
       const orderNo = String(Math.floor(100000 + Math.random() * 900000));
       Cart.clear();
       renderCartCount();
@@ -767,6 +894,7 @@
     initCartPage();
     initEmptyCartState();
     initCheckout();
+    initCheckoutSummary();
   }
 
   window.addEventListener("resize", setPhoneScale, { passive: true });

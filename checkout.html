@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="stylesheet" href="./style.css">
   <link rel="icon" type="image/png" href="assets/CovilLogo.png">
-  <title>Checkout</title>
+  <title>Shipping and payment Info</title>
 </head>
 <body>
   <div class="phone">
     <div class="notch"></div>
 
     <header class="checkoutHeader">
-      <div></div>
-      <a class="brandBox" href="index.html"><img src="assets/CovilLogo.png" alt="Covil" height="18"></a>
-      <a class="cartLink" href="cart.html">Cart <b data-cart-count></b></a>
+      <a class="icon" href="cart.html" aria-label="Back">
+        <img class="backArrowIcon" src="assets/BackArrow.png" alt="" aria-hidden="true">
+      </a>
+      <a class="brandBox" href="index.html"><img src="assets/CovilLogo.png" alt="Covil" height="24"></a>
+      <a class="cartLink" href="cart.html" aria-label="Cart"><img class="cartLinkIcon" src="assets/CartIcon.png" alt="" aria-hidden="true"><b data-cart-count></b></a>
     </header>
 
     <div class="orderSummaryBar">
-      <span>ORDER SUMMARY</span>
+      <span data-checkout-step-title>SHIPPING AND PAYMENT INFO</span>
       <span class="amt">CA$113.48</span>
     </div>
 
@@ -74,7 +76,7 @@
         </div>
 
         <div class="payNow">
-          <button class="btnPrimary" type="button" data-pay-now style="width:100%;">Finalize Transmission</button>
+          <button class="btnPrimary" type="button" data-checkout-continue style="width:100%;">Continue</button>
         </div>
 
         <div class="footerLinks">
