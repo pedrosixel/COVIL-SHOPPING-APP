@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/png" href="assets/CovilLogo.png">
+  <title>Checkout</title>
+</head>
+<body>
+  <div class="phone">
+    <div class="notch"></div>
+
+    <header class="checkoutHeader">
+      <div></div>
+      <a class="brandBox" href="index.html"><img src="assets/CovilLogo.png" alt="Covil" height="18"></a>
+      <a class="cartLink" href="cart.html">Cart <b data-cart-count></b></a>
+    </header>
+
+    <div class="orderSummaryBar">
+      <span>ORDER SUMMARY</span>
+      <span class="amt">CA$113.48</span>
+    </div>
+
+    <main class="content">
+      <section class="form">
+        <h3>Contact</h3>
+        <input class="field" type="email" placeholder="EMAIL">
+        <div class="checkboxRow">
+          <div class="checkbox"></div>
+          <div>EMAIL ME WITH NEWS AND OFFERS</div>
+        </div>
+
+        <h3>Delivery</h3>
+        <input class="field" type="text" placeholder="CANADA">
+        <input class="field" type="text" placeholder="FIRST NAME">
+        <input class="field" type="text" placeholder="LAST NAME">
+        <input class="field" type="text" placeholder="ADDRESS">
+        <input class="field" type="text" placeholder="APARTMENT, SUITE, ETC. (OPTIONAL)">
+        <input class="field" type="text" placeholder="CITY">
+        <input class="field" type="text" placeholder="BRITISH COLUMBIA">
+        <input class="field" type="text" placeholder="POSTAL CODE">
+        <input class="field" type="tel" placeholder="PHONE">
+
+        <h3>Payment</h3>
+        <div class="payIcons">
+          <div class="payIcon">PAYPAL</div>
+          <div class="payIcon">APPLE PAY</div>
+          <div class="payIcon">G PAY</div>
+        </div>
+
+        <div class="hrOr">OR</div>
+
+        <h3>Card</h3>
+        <input class="field" type="text" placeholder="CARD NUMBER">
+        <input class="field" type="text" placeholder="EXPIRATION DATE (MM/YY)">
+        <input class="field" type="text" placeholder="SECURITY CODE">
+        <input class="field" type="text" placeholder="NAME ON CARD">
+
+        <div class="checkboxRow">
+          <div class="checkbox checked"></div>
+          <div>USE SHIPPING ADDRESS AS BILLING ADDRESS</div>
+        </div>
+
+        <div class="totalRow">
+          <div class="left">
+            <div class="miniThumb"></div>
+            <div>
+              <div class="totalMain">TOTAL</div>
+              <div class="totalSub">2 ITEMS</div>
+            </div>
+          </div>
+          <div class="big">CA$133.46</div>
+        </div>
+
+        <div class="payNow">
+          <button class="btnPrimary" type="button" data-pay-now style="width:100%;">Finalize Transmission</button>
+        </div>
+
+        <div class="footerLinks">
+          <a href="index.html">REFUND POLICY</a>
+          <a href="index.html">SHIPPING</a>
+          <a href="index.html">PRIVACY POLICY</a>
+          <a href="index.html">TERMS</a>
+          <a href="index.html">CONTACT</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
