@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/png" href="assets/CovilLogo.png">
+  <title>Bag Empty</title>
+</head>
+<body>
+  <div class="phone">
+    <div class="notch"></div>
+
+    <header class="topbar">
+      <button class="icon" type="button" data-open-menu aria-label="Open menu">
+        <div class="hamburger"><i></i></div>
+      </button>
+      <a class="centerTitle small" href="index.html"><img src="assets/CovilLogo.png" alt="Covil" height="24"></a>
+      <a class="cartLink" href="cart.html">Cart</a>
+    </header>
+
+    <div class="menuShell" data-menu-shell hidden>
+      <button class="menuScrim" type="button" data-close-menu aria-label="Close menu"></button>
+      <aside class="menuPanel">
+        <button class="menuClose" type="button" data-close-menu>CLOSE</button>
+
+        <div class="menuSection" data-menu-section="shop">
+          <button class="menuItem" type="button" data-menu-toggle="shop">
+            SHOP <span data-menu-arrow="shop">+</span>
+          </button>
+          <div class="menuSectionList">
+            <a href="all.html">ALL</a>
+            <a href="tops.html">TOPS</a>
+            <a href="knitwear.html">KNITWEAR</a>
+            <a href="outwear.html">OUTERWEAR</a>
+            <a href="bottoms.html">BOTTOMS</a>
+            <a href="headwear.html">HEADWEAR</a>
+            <a href="accessories.html">ACCESSORIES</a>
+          </div>
+        </div>
+
+        <div class="menuSection" data-menu-section="sale">
+          <button class="menuItem sale" type="button" data-menu-toggle="sale">
+            SALE <span data-menu-arrow="sale">+</span>
+          </button>
+          <div class="menuSectionList">
+            <a href="tops.html">ALL</a>
+            <a href="tops.html">TOPS</a>
+            <a href="bottoms.html">BOTTOMS</a>
+            <a href="headwear.html">HEADWEAR</a>
+          </div>
+        </div>
+
+        <a class="menuItem" href="index.html">ACCOUNT</a>
+        <a class="menuItem" href="cart.html">CART</a>
+      </aside>
+    </div>
+
+    <main class="content">
+      <section class="homeWrap scrollY" style="justify-content:center;">
+        <div class="heroMeta">
+          <span class="miniLabel">YOUR BAG IS EMPTY</span>
+          <span class="miniLabel">0 ITEMS</span>
+        </div>
+        <div class="heroImage"></div>
+        <a class="btnPrimary homeCta" href="tops.html" data-continue-shopping>Continue Shopping</a>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
